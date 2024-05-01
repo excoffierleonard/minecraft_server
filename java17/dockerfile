@@ -1,0 +1,20 @@
+FROM openjdk:17-jdk-alpine
+
+
+WORKDIR /minecraft-server
+
+
+ENV JAVA_XMX=1024M
+ENV JAVA_XMS=1024M 
+ENV SERVER_NAME=server.jar
+
+
+RUN mkdir server-data
+
+RUN apk add --no-cache bash
+
+
+COPY start-server.sh .
+
+
+CMD ["./start-server.sh"]
