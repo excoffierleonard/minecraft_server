@@ -1,6 +1,6 @@
 # Minecraft Fabric Server Docker
 
-![Minecraft Logo](https://upload.wikimedia.org/wikipedia/commons/f/fb/Minecraft-creeper-face.jpg)
+![Minecraft Logo](https://cdn.freebiesupply.com/logos/large/2x/minecraft-1-logo-svg-vector.svg)
 
 This Docker image provides a simple and efficient way to run a Minecraft server using the Fabric mod loader. It automatically downloads the latest stable version of Minecraft and Fabric, making it easy to keep your server up-to-date.
 
