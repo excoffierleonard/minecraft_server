@@ -15,7 +15,7 @@ jobs:
       - name: Login to Gitea Container Registry
         uses: docker/login-action@master
         with:
-          registry: git.jisoonet.com
+          registry: http://gitea:3000
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
@@ -24,4 +24,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: git.jisoonet.com/${{ gitea.repository }}:latest
+          tags: ${{ gitea.repository }}:latest
