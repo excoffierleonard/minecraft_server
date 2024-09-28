@@ -12,6 +12,7 @@ services:
       - minecraftserver:/minecraftserver/appdata
     networks:
       - minecraftserver
+    restart: unless-stopped
 
 volumes:
   minecraftserver:
