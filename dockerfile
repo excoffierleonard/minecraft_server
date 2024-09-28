@@ -1,16 +1,17 @@
 FROM openjdk:24-slim-bullseye
 
-WORKDIR /minecraftserver
+ENV JAVA_XMS=2048M
+ENV JAVA_XMX=2048M
 
-ENV JAVA_XMX=1024M
-ENV JAVA_XMS=1024M 
-ENV SERVER_NAME=server.jar
+WORKDIR /minecraftserver
 
 RUN apt update && apt install -y curl jq
 
 RUN mkdir appdata
 
 RUN echo "eula=true" > appdata/eula.txt
+
+VOLUME [ "/minecraftserver/appdata" ]
 
 COPY entrypoint.sh .
 

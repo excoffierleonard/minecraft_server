@@ -25,7 +25,7 @@ if [ ! -f "$SERVER_FILE_NAME" ]; then
     
     download_server
 else
-    echo "Server file already exists. Skipping download."
+    echo "Jar file already exists. Skipping download."
 fi
 
-exec java -Xmx$JAVA_XMX -Xms$JAVA_XMS -jar $SERVER_FILE_NAME nogui
+exec java -Xms$JAVA_XMS -Xmx$JAVA_XMX -jar $SERVER_FILE_NAME nogui
