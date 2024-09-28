@@ -4,15 +4,26 @@
 
 This Docker image provides a simple and efficient way to run a Minecraft server using the Fabric mod loader. It automatically downloads the latest stable version of Minecraft and Fabric, making it easy to keep your server up-to-date.
 
+## Prerequisites
+
+- Docker
+- Docker Compose (Necessary for Quick Start)
+
+## Quick Start
+
+```bash
+curl -o compose.yaml https://git.jisoonet.com/el/minecraftserver/raw/branch/main/compose.yaml && docker compose up -d
+```
+
 ## Features
 
-- 🚀 Automatically downloads the latest stable Minecraft and Fabric versions
+- 🚀 Automatically downloads the latest stable Minecraft Fabric Server version
 - 🔧 Easy configuration through environment variables
 - 💾 Persistent data storage using Docker volumes
 - 🔄 Auto-restarts on crashes
 - 📜 Pre-accepted EULA for convenience
 
-## Quick Start
+## Run
 
 To get started with your Minecraft Fabric server, run the following command:
 
@@ -52,12 +63,14 @@ To customize your server, you can modify the files in the mounted volume. Some k
 
 To update to the latest version of Minecraft and Fabric, simply remove the `server-*.jar` file from your data directory and restart the container. It will automatically download the latest versions.
 
-## Building the Image
+> ⚠️ **Warning**: Updating may occasionally cause compatibility issues with existing mods or world saves. It's recommended to backup your data before updating.
 
-If you've made changes to the Dockerfile or entrypoint script, you can build the image using:
+## Building the Image Locally
 
 ```bash
-docker build -t your-image-name .
+git clone https://git.jisoonet.com/el/minecraftserver.git && \
+cd minecraftserver && \
+docker build -t minecraftserver .
 ```
 
 ## Contributing
@@ -66,7 +79,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-This project is open-source and available under the MIT License.
+This project is licensed under the [MIT License](LICENSE).
 
 ## Support
 
