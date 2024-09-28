@@ -27,6 +27,8 @@ This Docker image provides a simple and efficient way to run a Minecraft server 
 
 ## Quick Start
 
+Execute the following command to download the `compose.yaml` file and start the Minecraft server using Docker Compose usefull if you don't want to think about the configuration.
+
 ```bash
 curl -o compose.yaml https://git.jisoonet.com/el/minecraftserver/raw/branch/main/compose.yaml && docker compose up -d
 ```
