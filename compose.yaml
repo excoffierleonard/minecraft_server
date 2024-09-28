@@ -1,0 +1,22 @@
+services:
+  minecraftserver:
+    image: git.jisoonet.com/el/minecraftserver
+    container_name: minecraftserver
+    environment:
+      JAVA_XMS: ${JAVA_XMS:-1024M}
+      JAVA_XMX: ${JAVA_XMX:-1024M}
+    ports:
+      - "${SERVER_PORT:-25565}:25565"
+      - ${RCON_PORT}:25575
+    volumes:
+      - minecraftserver:/minecraftserver/appdata
+    networks:
+      - minecraftserver
+
+volumes:
+  minecraftserver:
+    name: minecraftserver
+
+networks:
+  minecraftserver:
+    name: minecraftserver

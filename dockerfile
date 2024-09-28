@@ -1,8 +1,8 @@
 FROM openjdk:24-slim-bullseye
 
-ENV JAVA_XMS=2048M
+ENV JAVA_XMS=1024M
 
-ENV JAVA_XMX=2048M
+ENV JAVA_XMX=1024M
 
 WORKDIR /minecraftserver
 
@@ -15,6 +15,8 @@ RUN echo "eula=true" > appdata/eula.txt
 VOLUME /minecraftserver/appdata
 
 EXPOSE 25565
+
+EXPOSE 25575
 
 COPY entrypoint.sh .
 
