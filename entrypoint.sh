@@ -17,7 +17,7 @@ download_server() {
 }
 
 if [ ! -f "$SERVER_FILE_NAME" ]; then
-    echo "Jar file not found. Downloading..."
+    echo "Server file not found. Downloading..."
 
     MINECRAFT_VERSION=$(get_latest_minecraft_version)
     LOADER_VERSION=$(get_latest_loader_version)
@@ -25,7 +25,7 @@ if [ ! -f "$SERVER_FILE_NAME" ]; then
     
     download_server
 else
-    echo "Jar file already exists. Skipping download."
+    echo "Server file already exists. Skipping download."
 fi
 
 exec java -Xms$JAVA_XMS -Xmx$JAVA_XMX -jar $SERVER_FILE_NAME nogui
