@@ -38,8 +38,6 @@ curl -o compose.yaml https://git.jisoonet.com/el/minecraftserver/raw/branch/main
 - `dockerfile`: Defines the Docker image, including dependencies and configuration.
 - `entrypoint.sh`: Script to initialize and set up the environment for the minecraftserver.
 - `compose.yaml`: Docker Compose file to define and manage the container.
-- `.dockerignore`: List of files and directories to be ignored by Docker during build.
-- `.gitignore`: Specifies files to be ignored by Git.
 
 ## Features
 
