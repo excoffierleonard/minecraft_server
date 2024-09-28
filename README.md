@@ -140,6 +140,7 @@ The container exposes a docker volume at `/minecraftserver/appdata`. This direct
 ## Ports
 
 The container exposes port 25565 by default, which is the default port for Minecraft servers, you are free to change it if you have need multiple minecraft servers.
+The container also exposes port 25575 for RCON (Remote Console) access, which is not required and is not forwarded by default.
 
 ## Customization
 
