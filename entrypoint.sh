@@ -22,7 +22,7 @@ download_server() {
 }
 
 if [ ! -f $SERVER_FILE_PATTERN ]; then
-    echo "Server file not found. Downloading..."
+    echo "Server file not found. Downloading.S."
     download_server
 else
     echo "Server file already exists. Skipping download."
