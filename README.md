@@ -51,8 +51,9 @@ curl -o compose.yaml https://git.jisoonet.com/el/minecraftserver/raw/branch/main
 
 The following environment variables can be set either in a `.env` file, directly written in `compose.yaml`, or hardcoded in the `Run` command:
 
-- `JAVA_XMS`: Minimum memory allocation pool for Java (default: 1024)
+- `JAVA_XMS`: Minimum memory allocation pool for Java (default: 1024M)
 - `JAVA_XMX`: Maximum memory allocation pool for Java (default: 1024M)
+- `MINECRAFT_VERSION`: The version of Minecraft to download (default: latest, minimum: 1.14)
 - `SERVER_PORT`: The port for the Minecraft server (default: 25565)
 - `RCON_PORT`: The port for RCON (Remote Console) access (not required, is not forwarded by default)
 
@@ -72,9 +73,10 @@ services:
     environment:
       JAVA_XMS: ${JAVA_XMS:-1024M}
       JAVA_XMX: ${JAVA_XMX:-1024M}
+      MINECRAFT_VERSION: ${MINECRAFT_VERSION:-latest}
     ports:
       - "${SERVER_PORT:-25565}:25565"
-      - ${RCON_PORT}:25575
+      - "${RCON_PORT}:25575"
     volumes:
       - minecraftserver:/minecraftserver/appdata
     networks:
@@ -90,13 +92,20 @@ networks:
     name: minecraftserver
 ```
 
-2. **Create a `.env` File:**
+Alternatively, you can download the [compose.yaml](compose.yaml) file directly from the repository:
+
+```bash
+curl -o compose.yaml https://git.jisoonet.com/el/minecraftserver/raw/branch/main/compose.yaml
+```
+
+2. **Create a `.env` File (Optional):**
 
 Set up environment variables by creating a `.env` file in the same directory as `compose.yaml`. You can use the example below as a guideline:
 
 ```bash
 JAVA_XMS=1024M
 JAVA_XMX=1024M
+MINECRAFT_VERSION=latest
 SERVER_PORT=25565
 RCON_PORT=25575
 ```
@@ -125,11 +134,12 @@ docker network create duplicacy_b2
 docker run \
   -d \
   --name minecraftserver \
-  --net=minecraftserver \
-  -p 25565:25565 \
   -e JAVA_XMS=1024M \
   -e JAVA_XMX=1024M \
+  -e MINECRAFT_VERSION=latest \
+  -p 25565:25565 \
   -v minecraftserver:/minecraftserver/appdata \
+  --net=minecraftserver \
   git.jisoonet.com/el/minecraftserver
 ```
 

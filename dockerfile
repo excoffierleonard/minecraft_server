@@ -2,6 +2,7 @@ FROM openjdk:24-slim-bullseye
 
 ENV JAVA_XMS=1024M
 ENV JAVA_XMX=1024M
+ENV MINECRAFT_VERSION=latest
 
 WORKDIR /minecraftserver
 

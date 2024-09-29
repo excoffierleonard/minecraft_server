@@ -13,7 +13,15 @@ get_latest_loader_version() {
 }
 
 download_server() {
-    MINECRAFT_VERSION=$(get_latest_minecraft_version)
+    # Check if MINECRAFT_VERSION is set to "latest"
+    if [ "$MINECRAFT_VERSION" = "latest" ]; then
+        MINECRAFT_VERSION=$(get_latest_minecraft_version)
+        echo "Using latest Minecraft version: $MINECRAFT_VERSION"
+    elif [ -z "$MINECRAFT_VERSION" ]; then
+        echo "MINECRAFT_VERSION environment variable is not set. Please set it to a version number or 'latest'."
+        exit 1
+    fi
+
     LOADER_VERSION=$(get_latest_loader_version)
     INSTALLER_VERSION="1.0.1"
     
