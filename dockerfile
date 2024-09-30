@@ -6,7 +6,7 @@ ENV MINECRAFT_VERSION=latest
 
 WORKDIR /minecraftserver
 
-RUN apt update && apt install -y curl jq
+RUN apt update && apt install -y curl jq unzip
 
 RUN mkdir appdata
 RUN echo "eula=true" > appdata/eula.txt
