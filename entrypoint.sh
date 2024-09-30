@@ -29,7 +29,7 @@ show_env_info() {
     echo "MINECRAFT_VERSION: $MINECRAFT_VERSION"
 }
 
-# Ensure that required environment variables are set and valid
+# Ensure that required environment variables are set and JAVA args valid
 check_env_vars() {
     echo "Checking required environment variables..."
     : "${JAVA_XMS:?"Environment variable JAVA_XMS is required but not set"}"
