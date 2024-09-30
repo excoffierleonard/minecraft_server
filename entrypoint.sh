@@ -16,10 +16,25 @@ show_env_info() {
 
 # Fetch the latest stable Minecraft version
 fetch_latest_minecraft_version() {
-    MINECRAFT_VERSION=$(curl -s https://meta.fabricmc.net/v2/versions/game | jq -r '[.[] | select(.stable == true)][0].version')
-    if [[ ! $MINECRAFT_VERSION =~ ^[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]; then
-        echo "Error: The retrieved version '$MINECRAFT_VERSION' is not a valid Minecraft version."
+    latest_version=$(curl -s https://meta.fabricmc.net/v2/versions/game | jq -r '[.[] | select(.stable == true)][0].version')
+    if [[ ! $latest_version =~ ^[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]; then
+        echo "Error: The retrieved version '$latest_version' is not a valid Minecraft version."
         exit 1
+    fi
+    echo "Latest stable Minecraft version is $latest_version"
+    MINECRAFT_VERSION=$latest_version
+}
+
+# Check if a specific Minecraft version is valid
+validate_minecraft_version() {
+    # Fetch all stable Minecraft versions
+    valid_versions=$(curl -s https://meta.fabricmc.net/v2/versions/game | jq -r '[.[] | select(.stable == true)][].version')
+
+    if ! echo "$valid_versions" | grep -Fxq "$MINECRAFT_VERSION"; then
+        echo "Error: The provided Minecraft version '$MINECRAFT_VERSION' is not a valid or stable version."
+        exit 1
+    else
+        echo "Validated Minecraft version: $MINECRAFT_VERSION"
     fi
 }
 
@@ -36,6 +51,8 @@ fetch_loader_version() {
 download_server() {
     if [ "$MINECRAFT_VERSION" = "latest" ]; then
         fetch_latest_minecraft_version
+    else
+        validate_minecraft_version
     fi
     fetch_loader_version
 
@@ -46,7 +63,7 @@ download_server() {
     curl -s -o "$SERVER_FILE_NAME" "https://meta.fabricmc.net/v2/versions/loader/$MINECRAFT_VERSION/$LOADER_VERSION/$INSTALLER_VERSION/server/jar"
 }
 
-# Check and download server jar if necessary
+# Check and download the server jar file if necessary
 verify_or_download_server() {
     local server_files=(server-*.jar)
     if [ ! -f "${server_files[0]}" ]; then
@@ -64,7 +81,7 @@ start_server() {
     exec java -Xms"$JAVA_XMS" -Xmx"$JAVA_XMX" -jar "$SERVER_FILE_NAME" nogui
 }
 
-# Main process
+# Main function
 main() {
     check_env_vars
     show_env_info
@@ -73,5 +90,5 @@ main() {
     start_server
 }
 
-# Execute main function
+# Execute the main function
 main
