@@ -5,6 +5,19 @@ check_env_vars() {
     : ${JAVA_XMS:?"Environment variable JAVA_XMS is required but not set"}
     : ${JAVA_XMX:?"Environment variable JAVA_XMX is required but not set"}
     : ${MINECRAFT_VERSION:?"Environment variable MINECRAFT_VERSION is required but not set"}
+
+    # Validate JAVA_XMS and JAVA_XMX
+    validate_memory_size "$JAVA_XMS"
+    validate_memory_size "$JAVA_XMX"
+}
+
+# Validate memory size format (e.g., 512M, 1G, etc.)
+validate_memory_size() {
+    local mem_size=$1
+    if ! [[ "$mem_size" =~ ^[0-9]+[GgMm]$ ]]; then
+        echo "Error: Invalid memory size '$mem_size'. It must be in the format <number>[Gg|Mm] (e.g., 512M, 1G)."
+        exit 1
+    fi
 }
 
 # Display current environment variables
