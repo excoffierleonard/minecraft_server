@@ -1,15 +1,5 @@
 #!/bin/bash
 
-# Ensure that required environment variables are set
-check_env_vars() {
-    : "${JAVA_XMS:?"Environment variable JAVA_XMS is required but not set"}"
-    : "${JAVA_XMX:?"Environment variable JAVA_XMX is required but not set"}"
-    : "${MINECRAFT_VERSION:?"Environment variable MINECRAFT_VERSION is required but not set"}"
-
-    validate_memory_size "$JAVA_XMS"
-    validate_memory_size "$JAVA_XMX"
-}
-
 # Validate memory size format (e.g., 512M, 1G, etc.)
 validate_memory_size() {
     local mem_size=$1
@@ -26,6 +16,19 @@ show_env_info() {
     echo "MINECRAFT_VERSION: $MINECRAFT_VERSION"
 }
 
+# Ensure that required environment variables are set
+check_env_vars() {
+    echo "Checking required environment variables..."
+    : "${JAVA_XMS:?"Environment variable JAVA_XMS is required but not set"}"
+    : "${JAVA_XMX:?"Environment variable JAVA_XMX is required but not set"}"
+    : "${MINECRAFT_VERSION:?"Environment variable MINECRAFT_VERSION is required but not set"}"
+
+    validate_memory_size "$JAVA_XMS"
+    validate_memory_size "$JAVA_XMX"
+    echo "All required environment variables are set."
+    show_env_info
+}
+
 # Fetch the latest stable Minecraft version
 fetch_latest_minecraft_version() {
     latest_version=$(curl -s https://meta.fabricmc.net/v2/versions/game | jq -r '[.[] | select(.stable == true)][0].version')
@@ -33,19 +36,15 @@ fetch_latest_minecraft_version() {
         echo "Error: The retrieved version '$latest_version' is not a valid Minecraft version."
         exit 1
     fi
-    echo "Latest stable Minecraft version is $latest_version"
     MINECRAFT_VERSION=$latest_version
 }
 
 # Check if a specific Minecraft version is valid
 validate_minecraft_version() {
     valid_versions=$(curl -s https://meta.fabricmc.net/v2/versions/game | jq -r '[.[] | select(.stable == true)][].version')
-
     if ! echo "$valid_versions" | grep -Fxq "$MINECRAFT_VERSION"; then
         echo "Error: The provided Minecraft version '$MINECRAFT_VERSION' is not a valid or stable version."
         exit 1
-    else
-        echo "Validated Minecraft version: $MINECRAFT_VERSION"
     fi
 }
 
@@ -60,6 +59,7 @@ fetch_loader_version() {
 
 # Download the Minecraft server jar if missing
 download_server() {
+    echo "Attempting Minecraft server JAR file download..."
     if [ "$MINECRAFT_VERSION" = "latest" ]; then
         fetch_latest_minecraft_version
     else
@@ -75,41 +75,33 @@ download_server() {
         echo "Error: Failed to download the server JAR file."
         exit 1
     fi
+    echo "Minecraft server JAR file downloaded successfully."
 }
 
-# Verify the integrity of the downloaded JAR file
-verify_jar_file() {
-    local jar_file=$1
-    if ! file "$jar_file" | grep -q "Zip archive data"; then
-        echo "Error: The downloaded file is not a valid JAR file."
-        return 1
-    fi
-    if ! unzip -t "$jar_file" > /dev/null 2>&1; then
-        echo "Error: The JAR file is corrupted or invalid."
-        return 1
-    fi
-    return 0
-}
-
-# Check and download the server jar file if necessary
+# Verify the existence of the server JAR file or download a new one
 verify_or_download_server() {
+    echo "Verifying the existence of the server JAR file..."
     local server_files=(server-*.jar)
     if [ ! -f "${server_files[0]}" ]; then
-        echo "Server file not found. Downloading..."
+        echo "Server file not found."
         download_server
     else
         SERVER_FILE_NAME="${server_files[0]}"
         echo "Server file found: $SERVER_FILE_NAME. Skipping download."
     fi
+}
 
-    if ! verify_jar_file "$SERVER_FILE_NAME"; then
-        echo "The existing server JAR file is invalid. Redownloading..."
-        rm "$SERVER_FILE_NAME"
+# Verify the integrity of the downloaded JAR file
+verify_jar_integrity() {
+    echo "Verifying the integrity of the server JAR file..."
+    if ! file "$SERVER_FILE_NAME" | grep -q "Zip archive data"; then
+        echo "Error: The downloaded file is not a valid JAR file."
         download_server
-        if ! verify_jar_file "$SERVER_FILE_NAME"; then
-            echo "Error: Failed to download a valid server JAR file after retry."
-            exit 1
-        fi
+    elif ! unzip -t "$SERVER_FILE_NAME" > /dev/null 2>&1; then
+        echo "Error: The JAR file is corrupted or invalid."
+        download_server
+    else
+        echo "JAR file integrity verified."
     fi
 }
 
@@ -125,10 +117,11 @@ start_server() {
 
 # Main function
 main() {
+    echo "Executing entrypoint script..."
     check_env_vars
-    show_env_info
     cd ./appdata || { echo "Error: Failed to change to ./appdata directory."; exit 1; }
     verify_or_download_server
+    verify_jar_integrity
     start_server
 }
 
