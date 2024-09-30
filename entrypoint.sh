@@ -2,9 +2,9 @@
 
 # Ensure that required environment variables are set
 check_env_vars() {
-    : ${JAVA_XMS:?"Environment variable JAVA_XMS is required but not set"}
-    : ${JAVA_XMX:?"Environment variable JAVA_XMX is required but not set"}
-    : ${MINECRAFT_VERSION:?"Environment variable MINECRAFT_VERSION is required but not set"}
+    : "${JAVA_XMS:?"Environment variable JAVA_XMS is required but not set"}"
+    : "${JAVA_XMX:?"Environment variable JAVA_XMX is required but not set"}"
+    : "${MINECRAFT_VERSION:?"Environment variable MINECRAFT_VERSION is required but not set"}"
 
     validate_memory_size "$JAVA_XMS"
     validate_memory_size "$JAVA_XMX"
@@ -51,7 +51,7 @@ validate_minecraft_version() {
 
 # Get the Fabric loader version for the specific Minecraft version
 fetch_loader_version() {
-    LOADER_VERSION=$(curl -s https://meta.fabricmc.net/v2/versions/loader/$MINECRAFT_VERSION | jq -r '[.[] | select(.loader.stable == true) | .loader.version][0]')
+    LOADER_VERSION=$(curl -s https://meta.fabricmc.net/v2/versions/loader/"$MINECRAFT_VERSION" | jq -r '[.[] | select(.loader.stable == true) | .loader.version][0]')
     if [[ ! $LOADER_VERSION =~ ^[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]; then
         echo "Error: The retrieved version '$LOADER_VERSION' is not a valid Loader version."
         exit 1
@@ -80,7 +80,7 @@ download_server() {
 # Verify the integrity of the downloaded JAR file
 verify_jar_file() {
     local jar_file=$1
-    if ! file "$jar_file" | grep -q "Java archive data"; then
+    if ! file "$jar_file" | grep -q "Zip archive data"; then
         echo "Error: The downloaded file is not a valid JAR file."
         return 1
     fi
