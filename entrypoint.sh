@@ -72,7 +72,24 @@ download_server() {
     SERVER_FILE_NAME="server-$MINECRAFT_VERSION-fabric.jar"
 
     echo "Downloading Minecraft version $MINECRAFT_VERSION with Fabric loader $LOADER_VERSION and Installer $INSTALLER_VERSION to $SERVER_FILE_NAME..."
-    curl -s -o "$SERVER_FILE_NAME" "https://meta.fabricmc.net/v2/versions/loader/$MINECRAFT_VERSION/$LOADER_VERSION/$INSTALLER_VERSION/server/jar"
+    if ! curl -s -o "$SERVER_FILE_NAME" "https://meta.fabricmc.net/v2/versions/loader/$MINECRAFT_VERSION/$LOADER_VERSION/$INSTALLER_VERSION/server/jar"; then
+        echo "Error: Failed to download the server JAR file."
+        exit 1
+    fi
+}
+
+# Verify the integrity of the downloaded JAR file
+verify_jar_file() {
+    local jar_file=$1
+    if ! file "$jar_file" | grep -q "Java archive data"; then
+        echo "Error: The downloaded file is not a valid JAR file."
+        return 1
+    fi
+    if ! unzip -t "$jar_file" > /dev/null 2>&1; then
+        echo "Error: The JAR file is corrupted or invalid."
+        return 1
+    fi
+    return 0
 }
 
 # Check and download the server jar file if necessary
@@ -85,11 +102,25 @@ verify_or_download_server() {
         SERVER_FILE_NAME="${server_files[0]}"
         echo "Server file found: $SERVER_FILE_NAME. Skipping download."
     fi
+
+    if ! verify_jar_file "$SERVER_FILE_NAME"; then
+        echo "The existing server JAR file is invalid. Redownloading..."
+        rm "$SERVER_FILE_NAME"
+        download_server
+        if ! verify_jar_file "$SERVER_FILE_NAME"; then
+            echo "Error: Failed to download a valid server JAR file after retry."
+            exit 1
+        fi
+    fi
 }
 
 # Start the Minecraft server
 start_server() {
     echo "Starting Minecraft server..."
+    if ! java -version > /dev/null 2>&1; then
+        echo "Error: Java is not installed or not in the system PATH."
+        exit 1
+    fi
     exec java -Xms"$JAVA_XMS" -Xmx"$JAVA_XMX" -jar "$SERVER_FILE_NAME" nogui
 }
 
@@ -97,7 +128,7 @@ start_server() {
 main() {
     check_env_vars
     show_env_info
-    cd ./appdata
+    cd ./appdata || { echo "Error: Failed to change to ./appdata directory."; exit 1; }
     verify_or_download_server
     start_server
 }
