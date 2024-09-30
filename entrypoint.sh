@@ -40,7 +40,6 @@ fetch_latest_minecraft_version() {
 
 # Check if a specific Minecraft version is valid
 validate_minecraft_version() {
-    # Fetch all stable Minecraft versions
     valid_versions=$(curl -s https://meta.fabricmc.net/v2/versions/game | jq -r '[.[] | select(.stable == true)][].version')
 
     if ! echo "$valid_versions" | grep -Fxq "$MINECRAFT_VERSION"; then
