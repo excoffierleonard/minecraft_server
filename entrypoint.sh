@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 # Ensure that required environment variables are set
 check_env_vars() {
     : ${JAVA_XMS:?"Environment variable JAVA_XMS is required but not set"}
@@ -16,16 +14,20 @@ show_env_info() {
     echo "MINECRAFT_VERSION: $MINECRAFT_VERSION"
 }
 
-# Resolve the required Minecraft version
-resolve_minecraft_version() {
+# Fetch the latest stable Minecraft version
+fetch_latest_minecraft_version() {
     MINECRAFT_VERSION=$(curl -s https://meta.fabricmc.net/v2/versions/game | jq -r '[.[] | select(.stable == true)][0].version')
+    if [[ ! $MINECRAFT_VERSION =~ ^[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]; then
+        echo "Error: The retrieved version '$MINECRAFT_VERSION' is not a valid Minecraft version."
+        exit 1
+    fi
 }
 
 # Get the Fabric loader version for the specific Minecraft version
 fetch_loader_version() {
     LOADER_VERSION=$(curl -s https://meta.fabricmc.net/v2/versions/loader/$MINECRAFT_VERSION | jq -r '[.[] | select(.loader.stable == true) | .loader.version][0]')
-    if [ -z "$LOADER_VERSION" ] || [ "$LOADER_VERSION" = "null" ]; then
-        echo "Error: Loader version is null or empty for Minecraft version $MINECRAFT_VERSION."
+    if [[ ! $LOADER_VERSION =~ ^[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]; then
+        echo "Error: The retrieved version '$LOADER_VERSION' is not a valid Loader version."
         exit 1
     fi
 }
@@ -33,7 +35,7 @@ fetch_loader_version() {
 # Download the Minecraft server jar if missing
 download_server() {
     if [ "$MINECRAFT_VERSION" = "latest" ]; then
-        resolve_minecraft_version
+        fetch_latest_minecraft_version
     fi
     fetch_loader_version
 
