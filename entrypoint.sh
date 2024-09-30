@@ -109,7 +109,7 @@ verify_or_download_server() {
         download_server
     else
         SERVER_FILE_NAME="${server_files[0]}"
-        echo "Server file found: $SERVER_FILE_NAME. Skipping download."
+        echo "Server file found: $SERVER_FILE_NAME."
     fi
 }
 
