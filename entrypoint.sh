@@ -9,6 +9,19 @@ validate_memory_size() {
     fi
 }
 
+# Convert memory size to megabytes for comparison
+convert_to_mb() {
+    local mem_size=$1
+    if [[ "$mem_size" =~ ^([0-9]+)[Gg]$ ]]; then
+        echo $(( ${BASH_REMATCH[1]} * 1024 ))
+    elif [[ "$mem_size" =~ ^([0-9]+)[Mm]$ ]]; then
+        echo ${BASH_REMATCH[1]}
+    else
+        echo "Error: Invalid memory size '$mem_size'."
+        exit 1
+    fi
+}
+
 # Display current environment variables
 show_env_info() {
     echo "JAVA_XMS: $JAVA_XMS"
@@ -16,7 +29,7 @@ show_env_info() {
     echo "MINECRAFT_VERSION: $MINECRAFT_VERSION"
 }
 
-# Ensure that required environment variables are set
+# Ensure that required environment variables are set and valid
 check_env_vars() {
     echo "Checking required environment variables..."
     : "${JAVA_XMS:?"Environment variable JAVA_XMS is required but not set"}"
@@ -25,6 +38,15 @@ check_env_vars() {
 
     validate_memory_size "$JAVA_XMS"
     validate_memory_size "$JAVA_XMX"
+
+    local xms_mb=$(convert_to_mb "$JAVA_XMS")
+    local xmx_mb=$(convert_to_mb "$JAVA_XMX")
+
+    if (( xms_mb > xmx_mb )); then
+        echo "Error: JAVA_XMS ($JAVA_XMS) cannot be greater than JAVA_XMX ($JAVA_XMX)."
+        exit 1
+    fi
+
     echo "All required environment variables are set."
     show_env_info
 }
