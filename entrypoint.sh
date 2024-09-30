@@ -6,7 +6,6 @@ check_env_vars() {
     : ${JAVA_XMX:?"Environment variable JAVA_XMX is required but not set"}
     : ${MINECRAFT_VERSION:?"Environment variable MINECRAFT_VERSION is required but not set"}
 
-    # Validate JAVA_XMS and JAVA_XMX
     validate_memory_size "$JAVA_XMS"
     validate_memory_size "$JAVA_XMX"
 }
