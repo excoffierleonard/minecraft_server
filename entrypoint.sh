@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # Exit if some environment variables are not set
 : ${JAVA_XMS:?"Environment variable JAVA_XMS is required but not set"}
 : ${JAVA_XMX:?"Environment variable JAVA_XMX is required but not set"}
@@ -30,13 +32,18 @@ download_server() {
         MINECRAFT_VERSION=$(get_latest_minecraft_version)
     fi
 
-    echo "Downloading Minecraft version: $MINECRAFT_VERSION"
-
     LOADER_VERSION=$(get_latest_loader_version)
+    if [ -z "$LOADER_VERSION" ] || [ "$LOADER_VERSION" = "null" ]; then
+        echo "Error: Loader version is null or empty for Minecraft version $MINECRAFT_VERSION."
+        exit 1
+    fi
+
     INSTALLER_VERSION="1.0.1"
     
     SERVER_FILE_NAME="server-$MINECRAFT_VERSION-fabric.jar"
-    curl -o $SERVER_FILE_NAME https://meta.fabricmc.net/v2/versions/loader/$MINECRAFT_VERSION/$LOADER_VERSION/$INSTALLER_VERSION/server/jar
+
+    echo "Downloading Minecraft version: $MINECRAFT_VERSION"
+    curl -os $SERVER_FILE_NAME https://meta.fabricmc.net/v2/versions/loader/$MINECRAFT_VERSION/$LOADER_VERSION/$INSTALLER_VERSION/server/jar
 }
 
 # Check if the server file exists
