@@ -3,9 +3,14 @@
 # Validate memory size format (e.g., 512M, 1G, etc.)
 validate_memory_size() {
     local mem_size=$1
+    local var_name=$2
     if ! [[ "$mem_size" =~ ^[0-9]+[GgMm]$ ]]; then
-        echo "Error: Invalid memory size '$mem_size'. It must be in the format <number>[Gg|Mm] (e.g., 512M, 1G)."
-        exit 1
+        echo "Warning: Invalid memory size '$mem_size'. It must be in the format <number>[Gg|Mm] (e.g., 512M, 1G). Defaulting to 1024M."
+        if [ "$var_name" == "JAVA_XMS" ]; then
+            JAVA_XMS="1024M"
+        elif [ "$var_name" == "JAVA_XMX" ]; then
+            JAVA_XMX="1024M"
+        fi
     fi
 }
 
@@ -32,19 +37,31 @@ show_env_info() {
 # Ensure that required environment variables are set and JAVA args valid
 check_env_vars() {
     echo "Checking required environment variables..."
-    : "${JAVA_XMS:?"Environment variable JAVA_XMS is required but not set"}"
-    : "${JAVA_XMX:?"Environment variable JAVA_XMX is required but not set"}"
-    : "${MINECRAFT_VERSION:?"Environment variable MINECRAFT_VERSION is required but not set"}"
+    
+    if [ -z "$JAVA_XMS" ]; then
+        echo "Warning: Environment variable JAVA_XMS is not set. Defaulting to 1024M."
+        JAVA_XMS="1024M"
+    fi
 
-    validate_memory_size "$JAVA_XMS"
-    validate_memory_size "$JAVA_XMX"
+    if [ -z "$JAVA_XMX" ]; then
+        echo "Warning: Environment variable JAVA_XMX is not set. Defaulting to 1024M."
+        JAVA_XMX="1024M"
+    fi
+
+    if [ -z "$MINECRAFT_VERSION" ]; then
+        echo "Warning: Environment variable MINECRAFT_VERSION is not set. Defaulting to 'latest'."
+        MINECRAFT_VERSION="latest"
+    fi
+
+    validate_memory_size "$JAVA_XMS" "JAVA_XMS"
+    validate_memory_size "$JAVA_XMX" "JAVA_XMX"
 
     local xms_mb=$(convert_to_mb "$JAVA_XMS")
     local xmx_mb=$(convert_to_mb "$JAVA_XMX")
 
     if (( xms_mb > xmx_mb )); then
-        echo "Error: JAVA_XMS ($JAVA_XMS) cannot be greater than JAVA_XMX ($JAVA_XMX)."
-        exit 1
+        echo "Warning: JAVA_XMS ($JAVA_XMS) cannot be greater than JAVA_XMX ($JAVA_XMX). Setting JAVA_XMS to $JAVA_XMX."
+        JAVA_XMS=$JAVA_XMX
     fi
 
     echo "All required environment variables are set."
@@ -65,8 +82,8 @@ fetch_latest_minecraft_version() {
 validate_minecraft_version() {
     valid_versions=$(curl -s https://meta.fabricmc.net/v2/versions/game | jq -r '[.[] | select(.stable == true)][].version')
     if ! echo "$valid_versions" | grep -Fxq "$MINECRAFT_VERSION"; then
-        echo "Error: The provided Minecraft version '$MINECRAFT_VERSION' is not a valid or stable version."
-        exit 1
+        echo "Warning: The provided Minecraft version '$MINECRAFT_VERSION' is not a valid or stable version. Defaulting to 'latest'."
+        fetch_latest_minecraft_version
     fi
 }
 
