@@ -125,7 +125,7 @@ docker compose up -d
 1. **Create a Docker Network:**
 
 ```bash
-docker network create duplicacy_b2
+docker network create minecraftserver
 ```
 
 2. **Execute the `Run` command:**
