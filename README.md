@@ -5,6 +5,7 @@
 This Docker image provides a simple and efficient way to run a Minecraft server using the Fabric mod loader. It automatically downloads the latest stable version of Minecraft Fabric Server, making it easy to start and keep your server up-to-date.
 
 ## Table of Contents
+
 1. [Prerequisites](#prerequisites)
 2. [Quick Start](#quick-start)
 3. [Project Structure](#project-structure)
@@ -55,7 +56,9 @@ The following environment variables can be set either in a `.env` file, directly
 - `JAVA_XMX`: Maximum memory allocation pool for Java (default: 1024M)
 - `MINECRAFT_VERSION`: The version of Minecraft to download (default: latest, minimum: 1.14)
 - `SERVER_PORT`: The port for the Minecraft server (default: 25565)
-- `RCON_PORT`: The port for RCON (Remote Console) access (not required, is not forwarded by default)
+- `RCON_PORT`: The port for RCON (Remote Console) access (default: 25575, RCON is not enabled by default)
+
+If you provide empty or invalid environment variables the default values will be used.
 
 ## Usage
 
@@ -76,12 +79,12 @@ services:
       MINECRAFT_VERSION: ${MINECRAFT_VERSION:-latest}
     ports:
       - "${SERVER_PORT:-25565}:25565"
-      - "${RCON_PORT}:25575"
+      - "${RCON_PORT-25575}:25575"
     volumes:
       - minecraftserver:/minecraftserver/appdata
     networks:
       - minecraftserver
-    restart: unless-stopped
+    restart: on-failure:5
 
 volumes:
   minecraftserver:
@@ -138,6 +141,7 @@ docker run \
   -e JAVA_XMX=1024M \
   -e MINECRAFT_VERSION=latest \
   -p 25565:25565 \
+  -p 25575:25575 \
   -v minecraftserver:/minecraftserver/appdata \
   --net=minecraftserver \
   git.jisoonet.com/el/minecraftserver
@@ -150,7 +154,7 @@ The container exposes a docker volume at `/minecraftserver/appdata`. This direct
 ## Ports
 
 The container exposes port 25565 by default, which is the default port for Minecraft servers, you are free to change it if you have need multiple minecraft servers.
-The container also exposes port 25575 for RCON (Remote Console) access, which is not required and is not forwarded by default.
+The container also exposes port 25575 for RCON (Remote Console) access, which is not required and is not enabled by default.
 
 ## Customization
 
