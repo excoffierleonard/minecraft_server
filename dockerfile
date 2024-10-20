@@ -11,6 +11,8 @@ RUN apt update && apt install -y curl jq file unzip
 RUN mkdir appdata
 RUN echo "eula=true" > appdata/eula.txt
 
+RUN chown -R 1000:1000 /minecraft_server/appdata
+
 VOLUME /minecraft_server/appdata
 
 EXPOSE 25565
