@@ -75,7 +75,7 @@ Create a `compose.yaml` file with the following content, you can find a template
 services:
   minecraft_server:
     image: git.jisoonet.com/el/minecraft_server
-    name: ${MINECRAFT_SERVER_SERVICE:-minecraft_server}
+    container_name: ${MINECRAFT_SERVER_SERVICE:-minecraft_server}
     environment:
       JAVA_XMS: ${JAVA_XMS:-1024M}
       JAVA_XMX: ${JAVA_XMX:-1024M}
