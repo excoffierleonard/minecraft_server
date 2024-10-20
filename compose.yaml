@@ -17,7 +17,7 @@ services:
 
 volumes:
   minecraft_server:
-    name: minecraft_server
+    name: ${MINECRAFT_SERVER_VOLUME:-minecraft_server}
 
 networks:
   minecraft_server:

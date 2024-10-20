@@ -57,6 +57,7 @@ The following environment variables can be set either in a `.env` file, directly
 - `MINECRAFT_VERSION`: The version of Minecraft to download (default: latest, minimum: 1.14)
 - `SERVER_PORT`: The port for the Minecraft server (default: 25565)
 - `RCON_PORT`: The port for RCON (Remote Console) access (default: 25575, RCON is not enabled by default)
+- `MINECRAFT_SERVER_VOLUME`: The name of the Docker volume for persistent data storage (default: minecraft_server)
 
 If you provide empty or invalid environment variables the default values will be used.
 
@@ -88,7 +89,7 @@ services:
 
 volumes:
   minecraft_server:
-    name: minecraft_server
+    name: ${MINECRAFT_SERVER_VOLUME:-minecraft_server}
 
 networks:
   minecraft_server:
@@ -111,6 +112,7 @@ JAVA_XMX=1024M
 MINECRAFT_VERSION=latest
 SERVER_PORT=25565
 RCON_PORT=25575
+MINECRAFT_SERVER_VOLUME=minecraft_server
 ```
 
 Alternatively, you can hardcode these values directly in [compose.yaml](compose.yaml).
