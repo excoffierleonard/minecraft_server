@@ -57,7 +57,9 @@ The following environment variables can be set either in a `.env` file, directly
 - `MINECRAFT_VERSION`: The version of Minecraft to download (default: latest, minimum: 1.14)
 - `SERVER_PORT`: The port for the Minecraft server (default: 25565)
 - `RCON_PORT`: The port for RCON (Remote Console) access (default: 25575, RCON is not enabled by default)
+- `MINECRAFT_SERVER_SERVICE`: The name of the Docker service for the container (default: minecraft_server)
 - `MINECRAFT_SERVER_VOLUME`: The name of the Docker volume for persistent data storage (default: minecraft_server)
+- `MINECRAFT_SERVER_NETWORK`: The name of the Docker network for the container (default: minecraft_server)
 
 If you provide empty or invalid environment variables the default values will be used.
 
@@ -73,14 +75,14 @@ Create a `compose.yaml` file with the following content, you can find a template
 services:
   minecraft_server:
     image: git.jisoonet.com/el/minecraft_server
-    container_name: minecraft_server
+    name: ${MINECRAFT_SERVER_SERVICE:-minecraft_server}
     environment:
       JAVA_XMS: ${JAVA_XMS:-1024M}
       JAVA_XMX: ${JAVA_XMX:-1024M}
       MINECRAFT_VERSION: ${MINECRAFT_VERSION:-latest}
     ports:
       - "${SERVER_PORT:-25565}:25565"
-      - "${RCON_PORT-25575}:25575"
+      - "${RCON_PORT:-25575}:25575"
     volumes:
       - minecraft_server:/minecraft_server/appdata
     networks:
@@ -93,7 +95,7 @@ volumes:
 
 networks:
   minecraft_server:
-    name: minecraft_server
+    name: ${MINECRAFT_SERVER_NETWORK:-minecraft_server}
 ```
 
 Alternatively, you can download the [compose.yaml](compose.yaml) file directly from the repository:
@@ -112,7 +114,9 @@ JAVA_XMX=1024M
 MINECRAFT_VERSION=latest
 SERVER_PORT=25565
 RCON_PORT=25575
+MINECRAFT_SERVER_SERVICE=minecraft_server
 MINECRAFT_SERVER_VOLUME=minecraft_server
+MINECRAFT_SERVER_NETWORK=minecraft_server
 ```
 
 Alternatively, you can hardcode these values directly in [compose.yaml](compose.yaml).

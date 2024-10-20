@@ -1,7 +1,7 @@
 services:
   minecraft_server:
     image: git.jisoonet.com/el/minecraft_server
-    container_name: minecraft_server
+    name: ${MINECRAFT_SERVER_SERVICE:-minecraft_server}
     environment:
       JAVA_XMS: ${JAVA_XMS:-1024M}
       JAVA_XMX: ${JAVA_XMX:-1024M}
@@ -21,4 +21,4 @@ volumes:
 
 networks:
   minecraft_server:
-    name: minecraft_server
+    name: ${MINECRAFT_SERVER_NETWORK:-minecraft_server}
