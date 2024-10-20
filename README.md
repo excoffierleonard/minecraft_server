@@ -31,13 +31,13 @@ This Docker image provides a simple and efficient way to run a Minecraft server 
 Execute the following command to download the `compose.yaml` file and start the Minecraft server using Docker Compose, useful if you don't want to think about the configuration.
 
 ```bash
-curl -o compose.yaml https://git.jisoonet.com/el/minecraftserver/raw/branch/main/compose.yaml && docker compose up -d
+curl -o compose.yaml https://git.jisoonet.com/el/minecraft_server/raw/branch/main/compose.yaml && docker compose up -d
 ```
 
 ## Project Structure
 
 - `dockerfile`: Defines the Docker image, including dependencies and configuration.
-- `entrypoint.sh`: Script to initialize and set up the environment for the minecraftserver.
+- `entrypoint.sh`: Script to initialize and set up the environment for the minecraft_server.
 - `compose.yaml`: Docker Compose file to define and manage the container.
 
 ## Features
@@ -70,9 +70,9 @@ Create a `compose.yaml` file with the following content, you can find a template
 
 ```yaml
 services:
-  minecraftserver:
-    image: git.jisoonet.com/el/minecraftserver
-    container_name: minecraftserver
+  minecraft_server:
+    image: git.jisoonet.com/el/minecraft_server
+    container_name: minecraft_server
     environment:
       JAVA_XMS: ${JAVA_XMS:-1024M}
       JAVA_XMX: ${JAVA_XMX:-1024M}
@@ -81,24 +81,24 @@ services:
       - "${SERVER_PORT:-25565}:25565"
       - "${RCON_PORT-25575}:25575"
     volumes:
-      - minecraftserver:/minecraftserver/appdata
+      - minecraft_server:/minecraft_server/appdata
     networks:
-      - minecraftserver
+      - minecraft_server
     restart: on-failure:5
 
 volumes:
-  minecraftserver:
-    name: minecraftserver
+  minecraft_server:
+    name: minecraft_server
 
 networks:
-  minecraftserver:
-    name: minecraftserver
+  minecraft_server:
+    name: minecraft_server
 ```
 
 Alternatively, you can download the [compose.yaml](compose.yaml) file directly from the repository:
 
 ```bash
-curl -o compose.yaml https://git.jisoonet.com/el/minecraftserver/raw/branch/main/compose.yaml
+curl -o compose.yaml https://git.jisoonet.com/el/minecraft_server/raw/branch/main/compose.yaml
 ```
 
 2. **Create a `.env` File (Optional):**
@@ -128,7 +128,7 @@ docker compose up -d
 1. **Create a Docker Network:**
 
 ```bash
-docker network create minecraftserver
+docker network create minecraft_server
 ```
 
 2. **Execute the `Run` command:**
@@ -136,20 +136,20 @@ docker network create minecraftserver
 ```bash
 docker run \
   -d \
-  --name minecraftserver \
+  --name minecraft_server \
   -e JAVA_XMS=1024M \
   -e JAVA_XMX=1024M \
   -e MINECRAFT_VERSION=latest \
   -p 25565:25565 \
   -p 25575:25575 \
-  -v minecraftserver:/minecraftserver/appdata \
-  --net=minecraftserver \
-  git.jisoonet.com/el/minecraftserver
+  -v minecraft_server:/minecraft_server/appdata \
+  --net=minecraft_server \
+  git.jisoonet.com/el/minecraft_server
 ```
 
 ## Volume
 
-The container exposes a docker volume at `/minecraftserver/appdata`. This directory contains all of the server's data, including world files, configuration, and logs.
+The container exposes a docker volume at `/minecraft_server/appdata`. This directory contains all of the server's data, including world files, configuration, and logs.
 
 ## Ports
 
@@ -173,9 +173,9 @@ To update to the latest version of Minecraft and Fabric, simply remove the `serv
 ## Building the Image Locally
 
 ```bash
-git clone https://git.jisoonet.com/el/minecraftserver.git && \
-cd minecraftserver && \
-docker build -t minecraftserver .
+git clone https://git.jisoonet.com/el/minecraft_server.git && \
+cd minecraft_server && \
+docker build -t minecraft_server .
 ```
 
 ## Contributing
