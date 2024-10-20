@@ -14,7 +14,8 @@ RUN mkdir appdata && \
     chown minecraft_user:minecraft_user /minecraft_server/appdata && \
     chmod 700 /minecraft_server/appdata
 
-RUN echo "eula=true" > appdata/eula.txt
+RUN echo "eula=true" > appdata/eula.txt && \
+    chown minecraft_user:minecraft_user /minecraft_server/appdata/eula.txt
 
 VOLUME /minecraft_server/appdata
 
