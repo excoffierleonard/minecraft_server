@@ -31,7 +31,7 @@ This Docker image provides a simple and efficient way to run a Minecraft server 
 Execute the following command to download the `compose.yaml` file and start the Minecraft server using Docker Compose, useful if you don't want to think about the configuration.
 
 ```bash
-curl -o compose.yaml https://git.jisoonet.com/el/minecraft_server/raw/branch/main/compose.yaml && docker compose up -d
+curl -o compose.yaml https://raw.githubusercontent.com/excoffierleonard/minecraft_server/refs/heads/main/compose.yaml && docker compose up -d
 ```
 
 ## Project Structure
@@ -74,7 +74,10 @@ Create a `compose.yaml` file with the following content, you can find a template
 ```yaml
 services:
   minecraft_server:
-    image: git.jisoonet.com/el/minecraft_server
+    build:
+      context: .
+      dockerfile: dockerfile
+    image: ghcr.io/excoffierleonard/minecraft_server
     container_name: ${MINECRAFT_SERVER_SERVICE:-minecraft_server}
     environment:
       JAVA_XMS: ${JAVA_XMS:-1024M}
@@ -96,12 +99,13 @@ volumes:
 networks:
   minecraft_server:
     name: ${MINECRAFT_SERVER_NETWORK:-minecraft_server}
+
 ```
 
 Alternatively, you can download the [compose.yaml](compose.yaml) file directly from the repository:
 
 ```bash
-curl -o compose.yaml https://git.jisoonet.com/el/minecraft_server/raw/branch/main/compose.yaml
+curl -o compose.yaml https://raw.githubusercontent.com/excoffierleonard/minecraft_server/refs/heads/main/compose.yaml
 ```
 
 2. **Create a `.env` File (Optional):**
@@ -150,7 +154,7 @@ docker run \
   -p 25575:25575 \
   -v minecraft_server:/minecraft_server/appdata \
   --net=minecraft_server \
-  git.jisoonet.com/el/minecraft_server
+  ghcr.io/excoffierleonard/minecraft_server
 ```
 
 ## Volume
@@ -179,9 +183,9 @@ To update to the latest version of Minecraft and Fabric, simply remove the `serv
 ## Building the Image Locally
 
 ```bash
-git clone https://git.jisoonet.com/el/minecraft_server.git && \
+git clone https://github.com/excoffierleonard/minecraft_server.git && \
 cd minecraft_server && \
-docker build -t minecraft_server .
+docker compose build
 ```
 
 ## Contributing

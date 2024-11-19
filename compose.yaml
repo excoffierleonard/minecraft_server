@@ -1,6 +1,9 @@
 services:
   minecraft_server:
-    image: git.jisoonet.com/el/minecraft_server
+    build:
+      context: .
+      dockerfile: dockerfile
+    image: ghcr.io/excoffierleonard/minecraft_server
     container_name: ${MINECRAFT_SERVER_SERVICE:-minecraft_server}
     environment:
       JAVA_XMS: ${JAVA_XMS:-1024M}
